@@ -1,5 +1,8 @@
 nextflow.enable.dsl=2
 
+include { VALIDATE_INPUTS } from './workflows/modules/validate'
+include { BUILD_REPORT } from './workflows/modules/report'
+
 params.config_path = null
 params.outdir = 'nextflow-results'
 
@@ -12,18 +15,19 @@ process ANALYZE {
   publishDir params.outdir, mode: 'copy', overwrite: true
   input:
   val config_path
+  path validation_marker
   output:
-  path 'workflow-complete.txt'
+  path 'run_path.txt'
   script:
   """
-  artifactor analyze --config ${config_path} --resume
-  artifactor validate --config ${config_path}
-  touch workflow-complete.txt
+  artifactor analyze --config '${config_path}' --resume > run_path.txt
   """
 }
 
 workflow {
   if (!params.config_path) error 'Provide --config_path <path>'
   def resolved_config = file(params.config_path, checkIfExists: true).toAbsolutePath().toString()
-  ANALYZE(resolved_config)
+  validation = VALIDATE_INPUTS(resolved_config)
+  run_path = ANALYZE(resolved_config, validation)
+  BUILD_REPORT(run_path)
 }
