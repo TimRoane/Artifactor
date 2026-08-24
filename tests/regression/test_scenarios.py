@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+import yaml
 
 from artifactor.pipeline import analyze
 from artifactor.simulation import simulate
@@ -23,8 +24,34 @@ def test_scientific_scenarios(tmp_path: Path) -> None:
     truth = json.loads((separable / "evaluation/ground_truth_metrics.json").read_text())
     assert chosen.technical_removal >= 0.40
     assert chosen.biological_loss < 0.05
-    assert truth["artifact_feature_precision"] >= 0.75
-    assert truth["artifact_feature_recall"] >= 0.75
+    assert truth["technical_precision"] >= 0.75
+    assert truth["technical_recall"] >= 0.75
+    assert truth["biological_precision"] >= 0.75
+    assert truth["biological_recall"] >= 0.75
+    assert truth["false_positive_rate_null"] <= 0.25
+
+    baseline = json.loads(Path("tests/fixtures/v010_baseline.json").read_text())
+    for metric in (
+        "technical_predictability",
+        "biological_retention",
+        "cross_modal_concordance",
+    ):
+        observed = dict(zip(metrics.method, metrics[metric], strict=True))
+        for method, expected in baseline["separable"][metric].items():
+            assert observed[method] == pytest.approx(expected, abs=baseline["absolute_tolerance"])
+
+    no_truth_config = yaml.safe_load((tmp_path / "separable/config.yaml").read_text())
+    no_truth_config["project"]["name"] = "separable-no-truth"
+    no_truth_config.pop("ground_truth", None)
+    no_truth_path = tmp_path / "separable/config-no-truth.yaml"
+    no_truth_path.write_text(yaml.safe_dump(no_truth_config, sort_keys=False), encoding="utf-8")
+    without_truth = analyze(no_truth_path)
+    without_truth_recommendation = json.loads(
+        (without_truth / "evaluation/recommendation.json").read_text()
+    )
+    assert without_truth_recommendation == json.loads(
+        (separable / "evaluation/recommendation.json").read_text()
+    )
 
     refused = json.loads((runs["confounded"] / "evaluation/recommendation.json").read_text())
     assert refused["method"] == "none"

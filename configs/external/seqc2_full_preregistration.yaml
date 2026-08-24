@@ -1,0 +1,4 @@
+schema_version: "4.0"
+extends: seqc2_preregistration.yaml
+dataset_id: seqc2_oncopanel
+preparation_fingerprint: 4c0d193699592f70

@@ -1,0 +1,62 @@
+schema_version: "4.0"
+datasets:
+  - dataset_id: seqc2_oncopanel
+    display_name: SEQC2 ultra-deep multi-oncopanel reference study
+    release_or_snapshot: figshare-collection-5842112-v2
+    retrieval_date: 2026-08-07
+    primary_publication: https://doi.org/10.1038/s41597-022-01359-6
+    license_or_terms: CC BY 4.0 for registered Figshare records; verify each record before use
+    redistribution_status: Source archives are public but are not committed; fixtures are structural and synthetic
+    access_level: open_direct
+    adapter: seqc2
+    preparation_version: seqc2-v2
+    expected_size_bytes: 193278464
+    expected_files: [IGT1.tar.gz, KnownPositives_hg19.vcf.gz, KnownNegatives_hg19.bed.gz, BED.zip, AGL1.tar.gz, BRP1.tar.gz, IDT1.tar.gz, ROC1.tar.gz, ILM1.tar.gz, TFS1.tar.gz, QGN1.tar.gz]
+    expected_checksums:
+      IGT1.tar.gz: 99090fc6dd66f77b54e08fcddbf0506f
+      KnownPositives_hg19.vcf.gz: fc547ab764adcb77fcb708f72daba68a
+      KnownNegatives_hg19.bed.gz: c0dae03b7675d8428dedbc563b842afe
+      BED.zip: 1733703f452d0539e296f6838b6f7098
+      AGL1.tar.gz: bd6ed3e250def8b5ebf53e6a38b6eb55
+      BRP1.tar.gz: 995c0a9eb01204b63b28908de8e79962
+      IDT1.tar.gz: 40bf8345e59975eb4bb27b08456ba937
+      ROC1.tar.gz: 3572958855586672d94dce0a11f6818e
+      ILM1.tar.gz: f7e16b8c7d65ad9523c42cfc41c777e9
+      TFS1.tar.gz: 150b1d993c4adbc9f8aab4303823838d
+      QGN1.tar.gz: 4d43bd9ba4f725de8bf6f39e15e1b939
+    notes: Pilot uses IGT plus truth and reporting regions. Full adds all eight submitted callset archives. Raw SRP295113 data exceed five terabytes and are excluded.
+    source_records:
+      - {source_name: Figshare IGT callsets, authoritative_url: "https://ndownloader.figshare.com/files/25815824", accession_or_study_id: "10.6084/m9.figshare.13411874.v1", file_name: IGT1.tar.gz, file_role: submitted_callsets, checksum_algorithm: md5, checksum: 99090fc6dd66f77b54e08fcddbf0506f, size_bytes: 6041337, tiers: [pilot, full]}
+      - {source_name: Figshare known positives, authoritative_url: "https://ndownloader.figshare.com/files/25927404", accession_or_study_id: "10.6084/m9.figshare.13511694.v1", file_name: KnownPositives_hg19.vcf.gz, file_role: truth_positive, checksum_algorithm: md5, checksum: fc547ab764adcb77fcb708f72daba68a, size_bytes: 406006, tiers: [pilot, full]}
+      - {source_name: Figshare known negatives, authoritative_url: "https://ndownloader.figshare.com/files/25927452", accession_or_study_id: "10.6084/m9.figshare.13511823.v1", file_name: KnownNegatives_hg19.bed.gz, file_role: truth_negative, checksum_algorithm: md5, checksum: c0dae03b7675d8428dedbc563b842afe, size_bytes: 7881128, tiers: [pilot, full]}
+      - {source_name: Figshare target regions, authoritative_url: "https://ndownloader.figshare.com/files/33984191", accession_or_study_id: "10.6084/m9.figshare.19128005.v2", file_name: BED.zip, file_role: reporting_regions, checksum_algorithm: md5, checksum: 1733703f452d0539e296f6838b6f7098, size_bytes: 299000, tiers: [pilot, full]}
+      - {source_name: Figshare AGL callsets, authoritative_url: "https://ndownloader.figshare.com/files/25815722", accession_or_study_id: "10.6084/m9.figshare.13411490.v1", file_name: AGL1.tar.gz, file_role: submitted_callsets, checksum_algorithm: md5, checksum: bd6ed3e250def8b5ebf53e6a38b6eb55, size_bytes: 51766716, tiers: [full]}
+      - {source_name: Figshare BRP callsets, authoritative_url: "https://ndownloader.figshare.com/files/25815761", accession_or_study_id: "10.6084/m9.figshare.13411754.v1", file_name: BRP1.tar.gz, file_role: submitted_callsets, checksum_algorithm: md5, checksum: 995c0a9eb01204b63b28908de8e79962, size_bytes: 71132144, tiers: [full]}
+      - {source_name: Figshare IDT callsets, authoritative_url: "https://ndownloader.figshare.com/files/25815788", accession_or_study_id: "10.6084/m9.figshare.13411808.v1", file_name: IDT1.tar.gz, file_role: submitted_callsets, checksum_algorithm: md5, checksum: 40bf8345e59975eb4bb27b08456ba937, size_bytes: 10703614, tiers: [full]}
+      - {source_name: Figshare ROC callsets, authoritative_url: "https://ndownloader.figshare.com/files/25815839", accession_or_study_id: "10.6084/m9.figshare.13412003.v1", file_name: ROC1.tar.gz, file_role: submitted_callsets, checksum_algorithm: md5, checksum: 3572958855586672d94dce0a11f6818e, size_bytes: 2231118, tiers: [full]}
+      - {source_name: Figshare ILM callsets, authoritative_url: "https://ndownloader.figshare.com/files/25815833", accession_or_study_id: "10.6084/m9.figshare.13411931.v1", file_name: ILM1.tar.gz, file_role: submitted_callsets, checksum_algorithm: md5, checksum: f7e16b8c7d65ad9523c42cfc41c777e9, size_bytes: 11688317, tiers: [full]}
+      - {source_name: Figshare TFS callsets, authoritative_url: "https://ndownloader.figshare.com/files/25815878", accession_or_study_id: "10.6084/m9.figshare.13412123.v1", file_name: TFS1.tar.gz, file_role: submitted_callsets, checksum_algorithm: md5, checksum: 150b1d993c4adbc9f8aab4303823838d, size_bytes: 15072518, tiers: [full]}
+      - {source_name: Figshare QGN callsets, authoritative_url: "https://ndownloader.figshare.com/files/25815836", accession_or_study_id: "10.6084/m9.figshare.13411955.v1", file_name: QGN1.tar.gz, file_role: submitted_callsets, checksum_algorithm: md5, checksum: 4d43bd9ba4f725de8bf6f39e15e1b939, size_bytes: 16056566, tiers: [full]}
+  - dataset_id: cptac_ccrcc
+    display_name: CPTAC clear-cell renal cell carcinoma proteogenomic study
+    release_or_snapshot: PDC000127-v1-publication-supplements
+    retrieval_date: 2026-08-07
+    primary_publication: https://doi.org/10.1016/j.cell.2019.10.007
+    license_or_terms: NCI Proteomic Data Commons open-access terms; publication supplements are open direct through signed PDC URLs
+    redistribution_status: Source archives are not committed; synthetic structural fixtures are redistributable
+    access_level: open_direct
+    adapter: cptac_ccrcc
+    preparation_version: cptac-ccrcc-v1
+    expected_size_bytes: 42022364
+    expected_files: [Supplementary_Data_Proteome_TMT.tar.gz, CPTAC_CCRCC_Transcriptome_rpkm.tar.gz, S050_S044_CPTAC_ccRCC_Discovery_Cohort_Clinical_Data_r4_Sept2019.xlsx, S044_TMT10_Label_to_Sample_Mapping_File_CCRCC_r2_Jan2019.xlsx]
+    expected_checksums:
+      Supplementary_Data_Proteome_TMT.tar.gz: 0fa5f5b83969d0b12a177c912a206a77
+      CPTAC_CCRCC_Transcriptome_rpkm.tar.gz: e3125e51cf2fb6553cd0d486a95d6a63
+      S050_S044_CPTAC_ccRCC_Discovery_Cohort_Clinical_Data_r4_Sept2019.xlsx: 86d3c475ba38133fb897e5feaf97f45b
+      S044_TMT10_Label_to_Sample_Mapping_File_CCRCC_r2_Jan2019.xlsx: 1ca3c65bec8bb816de2e2f8e747c94c4
+    notes: PDC000127 is the required global proteome. PDC000128 is phosphoproteome and is related but not the primary adapter input. Published processed protein data were already ComBat-adjusted and must be labeled upstream-corrected.
+    source_records:
+      - {source_name: PDC publication proteome supplement, authoritative_url: "https://pdc.cancer.gov/graphql", accession_or_study_id: PDC000127, file_name: Supplementary_Data_Proteome_TMT.tar.gz, file_role: protein_abundance, checksum_algorithm: md5, checksum: 0fa5f5b83969d0b12a177c912a206a77, size_bytes: 15052030, tiers: [pilot, full], resolver: pdc_graphql, resolver_file_id: 4822539d-0021-4164-9d98-59e7513f40f1, resolver_study_id: PDC000127}
+      - {source_name: PDC publication transcriptome supplement, authoritative_url: "https://pdc.cancer.gov/graphql", accession_or_study_id: PDC000127, file_name: CPTAC_CCRCC_Transcriptome_rpkm.tar.gz, file_role: rna_expression, checksum_algorithm: md5, checksum: e3125e51cf2fb6553cd0d486a95d6a63, size_bytes: 26807229, tiers: [pilot, full], resolver: pdc_graphql, resolver_file_id: eb2094c2-d77f-4fbb-88c3-56ee5b3ec88e, resolver_study_id: PDC000127}
+      - {source_name: PDC clinical metadata, authoritative_url: "https://pdc.cancer.gov/graphql", accession_or_study_id: PDC000127, file_name: S050_S044_CPTAC_ccRCC_Discovery_Cohort_Clinical_Data_r4_Sept2019.xlsx, file_role: clinical_metadata, checksum_algorithm: md5, checksum: 86d3c475ba38133fb897e5feaf97f45b, size_bytes: 139294, tiers: [pilot, full], resolver: pdc_graphql, resolver_file_id: a9647df1-0c5c-408c-a2fb-f991856514ee, resolver_study_id: PDC000127}
+      - {source_name: PDC TMT mapping metadata, authoritative_url: "https://pdc.cancer.gov/graphql", accession_or_study_id: PDC000127, file_name: S044_TMT10_Label_to_Sample_Mapping_File_CCRCC_r2_Jan2019.xlsx, file_role: technical_metadata, checksum_algorithm: md5, checksum: 1ca3c65bec8bb816de2e2f8e747c94c4, size_bytes: 23811, tiers: [pilot, full], resolver: pdc_graphql, resolver_file_id: 0e5a57cb-0111-4945-b9a6-58c3a8ea2edc, resolver_study_id: PDC000127}

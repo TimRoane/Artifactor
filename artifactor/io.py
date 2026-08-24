@@ -11,7 +11,7 @@ import pandas as pd
 from artifactor.config import ArtifactorConfig, ModalityConfig
 from artifactor.contracts import OmicsMatrix, ValidationIssue, ValidationResult
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "2.0"
 
 
 def read_table(path: Path) -> pd.DataFrame:
@@ -130,6 +130,11 @@ def validate_inputs(
     config: ArtifactorConfig,
 ) -> tuple[ValidationResult, pd.DataFrame | None, dict[str, OmicsMatrix]]:
     issues: list[ValidationIssue] = []
+    from artifactor.modalities import capability_issues
+
+    issues.extend(capability_issues(config))
+    if any(issue.level == "error" for issue in issues):
+        return ValidationResult(valid=False, issues=issues), None, {}
     try:
         manifest, matrices = load_inputs(config)
     except (OSError, ValueError) as exc:

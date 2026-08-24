@@ -1,6 +1,8 @@
 process BUILD_REPORT {
-  cpus 1; memory '1 GB'; time '10m'; container 'artifactor:0.1.0'
-  input: path run_path_file
+  cpus 1; memory '1 GB'; time '10m'; container 'artifactor:0.3.0'
+  input:
+  path run_path_file
+  path evaluation_marker
   output: path 'reported.txt'
   script:
   """

@@ -11,6 +11,8 @@ from artifactor.config import ArtifactorConfig
 from artifactor.contracts import OmicsMatrix
 from artifactor.diagnostics import robust_matrix
 
+from .metrics import relative_change
+
 
 def _predictability(matrix: OmicsMatrix, target: pd.Series, folds: int, seed: int) -> float:
     x, _, _ = robust_matrix(matrix, max_features=min(200, matrix.values.shape[1]))
@@ -98,13 +100,36 @@ def evaluate(
         raw_scores[method] = (technical, biological)
     metrics = pd.DataFrame(rows)
     baseline = metrics.loc[metrics.method == "none"].iloc[0]
-    metrics["technical_removal"] = 1 - metrics.technical_predictability / max(
-        float(baseline.technical_predictability), 1e-12
+    technical_changes = [
+        relative_change(float(value), float(baseline.technical_predictability))
+        for value in metrics.technical_predictability
+    ]
+    biological_changes = [
+        relative_change(float(value), float(baseline.biological_retention))
+        for value in metrics.biological_retention
+    ]
+    metrics["technical_removal"] = [item[0] for item in technical_changes]
+    metrics["technical_removal_applicability"] = [
+        item[1] or "applicable" for item in technical_changes
+    ]
+    metrics["biological_loss"] = [item[0] for item in biological_changes]
+    metrics["biological_loss_applicability"] = [
+        item[1] or "applicable" for item in biological_changes
+    ]
+    baseline_concordance = float(baseline.cross_modal_concordance)
+    concordance_ok = (
+        metrics.cross_modal_concordance
+        >= baseline_concordance * (1 - config.analysis.cross_modal_loss_guardrail)
+        if np.isfinite(baseline_concordance)
+        else pd.Series(True, index=metrics.index)
     )
-    metrics["biological_loss"] = 1 - metrics.biological_retention / max(
-        float(baseline.biological_retention), 1e-12
-    )
-    eligible = metrics[(metrics.biological_loss <= 0.05) & (metrics.technical_removal >= 0.05)]
+    eligible = metrics[
+        (metrics.biological_loss.notna())
+        & (metrics.technical_removal.notna())
+        & (metrics.biological_loss <= 0.05)
+        & (metrics.technical_removal >= 0.05)
+        & concordance_ok
+    ]
     if eligible.empty:
         selected = "none"
         rationale = "No eligible correction materially reduced technical predictability while preserving declared biology."
@@ -114,11 +139,15 @@ def evaluate(
             .iloc[0]
             .method
         )
-        rationale = f"{selected} lies on the preservation/removal frontier and maximizes technical removal under the 5% biological-loss guardrail."
+        rationale = f"{selected} lies on the preservation/removal frontier and maximizes technical removal under the 5% biological-loss and cross-modal concordance guardrails."
     recommendation: dict[str, object] = {
         "method": selected,
         "rationale": rationale,
-        "policy": {"maximum_biological_loss": 0.05, "minimum_technical_removal": 0.05},
+        "policy": {
+            "maximum_biological_loss": 0.05,
+            "minimum_technical_removal": 0.05,
+            "maximum_cross_modal_concordance_loss": config.analysis.cross_modal_loss_guardrail,
+        },
     }
     rng = np.random.default_rng(config.project.random_seed)
     bootstrap_rows = []

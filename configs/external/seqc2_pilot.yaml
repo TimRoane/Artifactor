@@ -1,0 +1,7 @@
+schema_version: "4.0"
+dataset_id: seqc2_oncopanel
+tier: pilot
+preparation_fingerprint: fe2068be53b03f54
+prepared_dir: data/prepared/seqc2_oncopanel/fe2068be53b03f54
+output_dir: results
+analysis_budget: pilot

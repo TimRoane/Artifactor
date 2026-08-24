@@ -1,0 +1,90 @@
+{
+  "created_by": "artifactor_onboarding",
+  "input_inspection": {
+    "matrices": [
+      {
+        "feature_count": 2000,
+        "matched_samples": 240,
+        "matrix_only_samples": 0,
+        "matrix_sample_id_column": "sample_id",
+        "metadata_only_samples": 0,
+        "name": "expression.csv",
+        "numeric_fraction": 1.0,
+        "orientation": "samples_by_features",
+        "sample_count": 240,
+        "warnings": []
+      }
+    ],
+    "metadata_columns": [
+      "sample_id",
+      "subject_id",
+      "condition",
+      "sex",
+      "extraction_batch",
+      "reagent_lot",
+      "RIN"
+    ],
+    "metadata_rows": 240,
+    "metadata_sample_id_column": "sample_id",
+    "schema_version": "4.1",
+    "suggested_biological": [
+      "condition",
+      "sex"
+    ],
+    "suggested_identifier": [
+      "subject_id"
+    ],
+    "suggested_ignore": [],
+    "suggested_protected": [
+      "condition",
+      "sex"
+    ],
+    "suggested_technical": [
+      "extraction_batch",
+      "reagent_lot",
+      "RIN"
+    ],
+    "warnings": []
+  },
+  "matrices": [
+    {
+      "feature_count": 2000,
+      "kind": "rna_continuous",
+      "matched_samples": 240,
+      "matrix_only_samples": 0,
+      "matrix_sample_id_column": "sample_id",
+      "metadata_only_samples": 0,
+      "name": "expression.csv",
+      "normalized_path": "inputs\\expression.parquet",
+      "numeric_fraction": 1.0,
+      "orientation": "samples_by_features",
+      "sample_count": 240,
+      "source_name": "expression.csv",
+      "warnings": []
+    }
+  ],
+  "metadata_original_sample_id_column": "sample_id",
+  "project_name": "RNA Test Study",
+  "role_suggestions_require_human_confirmation": false,
+  "schema_version": "4.1",
+  "selected_roles": {
+    "biological": [
+      "condition",
+      "sex"
+    ],
+    "controls": [],
+    "identifier": [
+      "subject_id"
+    ],
+    "ignore": [],
+    "protected": [
+      "condition",
+      "sex"
+    ],
+    "technical": [
+      "extraction_batch",
+      "reagent_lot",
+      "RIN"
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+schema_version: "4.0"
+executors:
+  native_local: {required: true, status: execution_validated, evidence: benchmark/v040_native_small}
+  docker_local: {required: true, status: unavailable_in_validation_environment, evidence: null}
+  nextflow_local: {required: true, status: unavailable_in_validation_environment, evidence: null}
+  slurm_apptainer: {required: false, status: configuration_validated_only, evidence: [conf/slurm.config]}
+  aws_batch: {required: false, status: configuration_validated_only, evidence: [conf/awsbatch.config]}
+claim_policy: Configuration validation is never presented as real execution.

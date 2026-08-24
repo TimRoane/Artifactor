@@ -6,7 +6,9 @@ import numpy as np
 import pandas as pd
 import yaml
 
-SCENARIOS = ("separable", "confounded", "cross_modal", "plate_drift")
+from artifactor.ngs.simulation import NGS_SCENARIOS, simulate_ngs
+
+SCENARIOS = ("separable", "confounded", "cross_modal", "plate_drift", *NGS_SCENARIOS)
 
 
 def _matrix(
@@ -19,42 +21,57 @@ def _matrix(
     scenario: str,
 ) -> tuple[np.ndarray, list[dict[str, object]]]:
     values = rng.normal(0, 1, (len(shared), features))
-    truth: list[dict[str, object]] = []
+    biological_effects = np.zeros(features)
+    technical_effects = np.zeros(features)
+    technical_variables: list[str | None] = [None] * features
     bio_count = min(max(5, int(features * 0.4)), features // 2)
     tech_count = min(max(5, features // 10), features - bio_count)
-    values[:, :bio_count] += shared[:, None] * rng.uniform(1.2, 2.0, bio_count)
-    for index in range(bio_count):
-        truth.append(
-            {
-                "modality": modality,
-                "feature": f"F{index:04d}",
-                "signal": "biological_condition",
-                "affected": True,
-            }
-        )
+    biological_effects[:bio_count] = rng.uniform(1.2, 2.0, bio_count)
+    values[:, :bio_count] += shared[:, None] * biological_effects[:bio_count]
     tech_effect = batch if scenario != "plate_drift" else np.linspace(-1, 1, len(batch))
     if scenario != "cross_modal" or modality == "rna":
-        values[:, bio_count : bio_count + tech_count] += tech_effect[:, None] * rng.uniform(
-            1.5, 2.5, tech_count
+        technical_effects[bio_count : bio_count + tech_count] = rng.uniform(1.5, 2.5, tech_count)
+        values[:, bio_count : bio_count + tech_count] += (
+            tech_effect[:, None] * technical_effects[bio_count : bio_count + tech_count]
         )
+        artifact_variable = "run_order" if scenario == "plate_drift" else "extraction_batch"
         for index in range(bio_count, bio_count + tech_count):
-            truth.append(
-                {
-                    "modality": modality,
-                    "feature": f"F{index:04d}",
-                    "signal": "processing_artifact",
-                    "affected": True,
-                }
-            )
+            technical_variables[index] = artifact_variable
     quality_count = min(20, features)
-    values[:, -quality_count:] += ((rin - rin.mean()) / rin.std())[:, None] * rng.uniform(
-        0.5, 1.0, quality_count
+    quality_effects = rng.uniform(0.5, 1.0, quality_count)
+    values[:, -quality_count:] += ((rin - rin.mean()) / rin.std())[:, None] * quality_effects
+    technical_effects[-quality_count:] = np.maximum(
+        technical_effects[-quality_count:], quality_effects
     )
+    for index in range(features - quality_count, features):
+        technical_variables[index] = technical_variables[index] or "RIN"
     if modality == "protein":
         probability = 0.01 + 0.08 / (1 + np.exp(values))
         if scenario == "plate_drift":
             probability += (np.arange(len(shared)) % 12 == 0)[:, None] * 0.12
         values[rng.random(values.shape) < probability] = np.nan
+    truth: list[dict[str, object]] = []
+    for index in range(features):
+        has_biology = biological_effects[index] != 0
+        has_technical = technical_effects[index] != 0
+        truth.append(
+            {
+                "schema_version": "2.0",
+                "scenario": scenario,
+                "modality": modality,
+                "feature_id": f"F{index:04d}",
+                "is_biological": bool(has_biology and not has_technical),
+                "is_technical": bool(has_technical and not has_biology),
+                "is_mixed": bool(has_biology and has_technical),
+                "is_null": bool(not has_biology and not has_technical),
+                "biological_effect_type": "condition" if has_biology else None,
+                "biological_effect_size": float(biological_effects[index]),
+                "technical_effect_type": "linear_offset" if has_technical else None,
+                "technical_effect_size": float(technical_effects[index]),
+                "technical_variable": technical_variables[index],
+                "mapped_feature_id": f"F{index:04d}" if index < min(200, features) else None,
+            }
+        )
     return values, truth
 
 
@@ -66,6 +83,16 @@ def simulate(
     rna_features: int = 2000,
     protein_features: int = 500,
 ) -> None:
+    if scenario in NGS_SCENARIOS:
+        simulate_ngs(
+            scenario,
+            output,
+            seed=seed,
+            samples=384 if samples == 240 else max(16, samples),
+            targets=max(20, min(rna_features, 800)),
+            loci=max(12, min(protein_features, 200)),
+        )
+        return
     if scenario not in SCENARIOS:
         raise ValueError(f"unknown scenario {scenario!r}; choose from {', '.join(SCENARIOS)}")
     output.mkdir(parents=True, exist_ok=True)

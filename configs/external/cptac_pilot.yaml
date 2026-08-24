@@ -1,0 +1,7 @@
+schema_version: "4.0"
+dataset_id: cptac_ccrcc
+tier: pilot
+preparation_fingerprint: 3a2ae957d303d500
+prepared_dir: data/prepared/cptac_ccrcc/3a2ae957d303d500
+output_dir: results
+analysis_budget: diagnostic_only

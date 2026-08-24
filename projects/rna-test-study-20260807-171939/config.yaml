@@ -1,0 +1,40 @@
+project:
+  name: rna-test-study
+  output_dir: results
+  random_seed: 20260807
+manifest:
+  path: inputs/metadata.parquet
+  sample_id_column: sample_id
+variables:
+  biological:
+  - condition
+  - sex
+  technical:
+  - extraction_batch
+  - reagent_lot
+  - RIN
+  protected:
+  - condition
+  - sex
+  identifier:
+  - subject_id
+  ignore: []
+  controls: []
+modalities:
+- name: expression
+  kind: rna_continuous
+  path: inputs/expression.parquet
+  orientation: samples_by_features
+  transform: none
+analysis:
+  analysis_budget: full
+corrections:
+  methods:
+  - none
+  - residualize
+  - combat
+  refuse_if_rank_deficient: true
+  maximum_confounding_score: 0.85
+report:
+  title: "Artifactor \u2014 RNA Test Study"
+  include_interactive_plots: true

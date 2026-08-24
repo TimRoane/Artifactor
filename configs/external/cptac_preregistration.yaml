@@ -1,0 +1,13 @@
+schema_version: "4.0"
+dataset_id: cptac_ccrcc
+preparation_fingerprint: 3a2ae957d303d500
+method_freeze: v0.3.0
+split_policy: grouped_by_subject
+negative_controls: [permuted_tissue_labels, upstream_correction_guard]
+questions:
+  - {question_id: cptac_biological_separation, dataset_id: cptac_ccrcc, title: Biological separation, hypothesis: Tissue biology is detectable in RNA and protein, analysis_population: Publication tumor and normal matrices, primary_metrics: [biological_predictability], acceptance_rule: grouped estimate exceeds chance, non_evaluable_rule: subject/tissue mapping incomplete, evidence_level: observational_association}
+  - {question_id: cptac_protein_technical, dataset_id: cptac_ccrcc, title: Proteomics technical structure, hypothesis: Public technical variables associate with protein factors, analysis_population: TMT publication samples, primary_metrics: [technical_association, missingness], acceptance_rule: calibrated association is estimable, non_evaluable_rule: metadata unavailable or already corrected, evidence_level: observational_association}
+  - {question_id: cptac_rna_technical, dataset_id: cptac_ccrcc, title: RNA technical structure, hypothesis: RNA technical variables associate after tissue, analysis_population: RNA publication samples, primary_metrics: [technical_association], acceptance_rule: calibrated association is estimable, non_evaluable_rule: public covariates unavailable, evidence_level: observational_association}
+  - {question_id: cptac_cross_modal, dataset_id: cptac_ccrcc, title: Cross-modal concordance, hypothesis: Representation preserves RNA-protein relationships, analysis_population: Frozen one-to-one paired subset, primary_metrics: [feature_correlation, sample_similarity], acceptance_rule: concordance guardrail passes, non_evaluable_rule: versioned mapping or pairing unavailable, evidence_level: observational_association}
+  - {question_id: cptac_correction_eligibility, dataset_id: cptac_ccrcc, title: Correction eligibility, hypothesis: Design gate controls mitigation, analysis_population: Public processed study, primary_metrics: [eligibility_decision], acceptance_rule: correction is recommended only with identifiable uncorrected inputs, non_evaluable_rule: essential design metadata unavailable, evidence_level: observational_association}
+  - {question_id: cptac_root_cause, dataset_id: cptac_ccrcc, title: Root-cause hypothesis quality, hypothesis: Evidence is calibrated and actionable, analysis_population: Generated evidence cards, primary_metrics: [evidence_card_completeness], acceptance_rule: alternatives and distinguishing experiment are stated, non_evaluable_rule: no evidence card, evidence_level: observational_association}

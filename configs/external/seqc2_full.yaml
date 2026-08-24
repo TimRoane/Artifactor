@@ -1,0 +1,7 @@
+schema_version: "4.0"
+dataset_id: seqc2_oncopanel
+tier: full
+preparation_fingerprint: 4c0d193699592f70
+prepared_dir: data/prepared/seqc2_oncopanel/4c0d193699592f70
+output_dir: results
+analysis_budget: full_processed

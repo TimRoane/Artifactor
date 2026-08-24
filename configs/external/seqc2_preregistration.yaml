@@ -1,0 +1,13 @@
+schema_version: "4.0"
+dataset_id: seqc2_oncopanel
+preparation_fingerprint: fe2068be53b03f54
+method_freeze: v0.3.0
+split_policy: grouped_by_reference_sample_and_laboratory
+negative_controls: [permuted_reference_labels, incomparable_target_universe]
+questions:
+  - {question_id: seqc_reference_separation, dataset_id: seqc2_oncopanel, title: Reference-sample separation, hypothesis: Reference identity is leading known-content structure, analysis_population: Primary A/B/C/AC5 IGT libraries, primary_metrics: [within_vs_between_call_jaccard], acceptance_rule: within_minus_between_jaccard >= 0.10, non_evaluable_rule: fewer than two reference samples, evidence_level: technical_replication}
+  - {question_id: seqc_technical_structure, dataset_id: seqc2_oncopanel, title: Laboratory and panel structure, hypothesis: Technical source is associated after reference identity, analysis_population: Comparable reporting universe, primary_metrics: [laboratory_association, panel_association], acceptance_rule: association is estimable and calibrated, non_evaluable_rule: fewer than two levels, evidence_level: observational_association}
+  - {question_id: seqc_replicate_reproducibility, dataset_id: seqc2_oncopanel, title: Technical-replicate reproducibility, hypothesis: Within-reference repeats are more concordant, analysis_population: Repeated IGT libraries, primary_metrics: [call_jaccard], acceptance_rule: within_reference > between_reference, non_evaluable_rule: no repeated libraries, evidence_level: technical_replication}
+  - {question_id: seqc_expected_vaf, dataset_id: seqc2_oncopanel, title: Expected VAF behavior, hypothesis: Truth recovery decreases with expected VAF, analysis_population: Truth-positive callable loci, primary_metrics: [recovery_by_vaf], acceptance_rule: expected directional trend with uncertainty, non_evaluable_rule: callability unavailable, evidence_level: reference_truth}
+  - {question_id: seqc_negative_positions, dataset_id: seqc2_oncopanel, title: Negative-position behavior, hypothesis: Unexpected calls show technical concentration, analysis_population: Callable truth-negative loci, primary_metrics: [truth_negative_agreement], acceptance_rule: calibrated rate by laboratory and panel, non_evaluable_rule: site-level callability unavailable, evidence_level: reference_truth}
+  - {question_id: seqc_published_direction, dataset_id: seqc2_oncopanel, title: Published-direction comparison, hypothesis: Direction agrees with source study, analysis_population: Comparable public processed records, primary_metrics: [directional_consistency], acceptance_rule: consistent or partially_consistent, non_evaluable_rule: no comparable population, evidence_level: published_directional_comparison}

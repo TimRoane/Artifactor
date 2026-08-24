@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "seed": 20260805,
+  "test_baseline": "15 passed",
+  "separable": {
+    "design_status": "separable",
+    "recommendation": "residualize",
+    "technical_predictability": {"none": 0.627912296902136, "residualize": 0.07291666666666667, "combat": 0.3116611214900133},
+    "biological_retention": {"none": 0.71875, "residualize": 0.7427083333333333, "combat": 0.6864583333333333},
+    "cross_modal_concordance": {"none": 0.46069437082392173, "residualize": 0.4630955475773595, "combat": 0.45650533577327224}
+  },
+  "confounded": {
+    "design_status": "non_identifiable",
+    "recommendation": "none",
+    "technical_predictability": {"none": 0.6190934389613936},
+    "biological_retention": {"none": 0.75},
+    "cross_modal_concordance": {"none": 0.4156741600199744}
+  },
+  "absolute_tolerance": 1e-8
+}

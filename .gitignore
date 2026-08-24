@@ -9,5 +9,7 @@ dist/
 demo/
 benchmark/
 results/
+data/source/
+data/prepared/
 .nextflow/
 work/

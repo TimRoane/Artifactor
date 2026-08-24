@@ -1,0 +1,18 @@
+{
+  "correction_eligible": true,
+  "design_diagnostics": {
+    "columns": 7,
+    "condition_number": 96.18593377171575,
+    "rank": 7,
+    "rank_deficient": false
+  },
+  "design_reason": "Biological and technical variables are sufficiently separable.",
+  "design_status": "separable",
+  "issues": [],
+  "modality_samples": {
+    "expression": 240
+  },
+  "sample_count": 240,
+  "schema_version": "4.1",
+  "valid": true
+}

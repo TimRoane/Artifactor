@@ -207,12 +207,21 @@ def variance_partition(
     output = []
     if complete.any():
         y = values[:, complete]
+        intercept, _ = encoded_design(metadata, [])
+        intercept_fit = intercept @ np.linalg.lstsq(intercept, y, rcond=None)[0]
         reduced_fit = reduced @ np.linalg.lstsq(reduced, y, rcond=None)[0]
         full_fit = full @ np.linalg.lstsq(full, y, rcond=None)[0]
         sse_reduced = ((y - reduced_fit) ** 2).sum(axis=0)
+        sse_intercept = ((y - intercept_fit) ** 2).sum(axis=0)
         sse_full = ((y - full_fit) ** 2).sum(axis=0)
         raw = np.divide(
             sse_reduced - sse_full, sse_reduced, out=np.zeros_like(sse_full), where=sse_reduced > 0
+        )
+        biological_raw = np.divide(
+            sse_intercept - sse_reduced,
+            sse_intercept,
+            out=np.zeros_like(sse_reduced),
+            where=sse_intercept > 0,
         )
         partial_by_variable: dict[str, np.ndarray] = {}
         for variable in technical:
@@ -238,6 +247,8 @@ def variance_partition(
                 "feature": feature,
                 "partial_r2_technical_raw": value,
                 "partial_r2_technical": max(0.0, float(value)),
+                "partial_r2_biological_raw": float(biological_raw[feature_index]),
+                "partial_r2_biological": max(0.0, float(biological_raw[feature_index])),
                 "negative_clamped": bool(value < 0),
                 "insufficient_observations": False,
             }
@@ -255,6 +266,8 @@ def variance_partition(
                 "feature": feature,
                 "partial_r2_technical_raw": np.nan,
                 "partial_r2_technical": np.nan,
+                "partial_r2_biological_raw": np.nan,
+                "partial_r2_biological": np.nan,
                 "negative_clamped": False,
                 "insufficient_observations": True,
             }
