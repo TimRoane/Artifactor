@@ -1,0 +1,52 @@
+project:
+  name: separable-demo
+  output_dir: results
+  random_seed: 20260805
+manifest:
+  path: manifest.parquet
+  sample_id_column: sample_id
+  subject_id_column: subject_id
+variables:
+  biological:
+  - condition
+  - sex
+  technical:
+  - extraction_batch
+  - reagent_lot
+  - RIN
+  protected:
+  - condition
+  - sex
+modalities:
+- name: rna
+  kind: rna_continuous
+  path: rna.parquet
+  orientation: samples_by_features
+  transform: none
+  max_features: 2000
+- name: protein
+  kind: proteomics_continuous
+  path: protein.parquet
+  orientation: samples_by_features
+  transform: none
+  max_features: 500
+analysis:
+  sample_join: intersection
+  latent_components: 10
+  p_adjust_method: fdr_bh
+  permutations: 99
+  cross_validation_folds: 5
+  bootstrap_iterations: 20
+  analysis_budget: quick
+corrections:
+  methods:
+  - none
+  - residualize
+  - combat
+  refuse_if_rank_deficient: true
+  maximum_confounding_score: 0.85
+report:
+  title: Artifactor Separable Demo
+  include_interactive_plots: true
+feature_map: feature_map.parquet
+ground_truth: ground_truth.parquet
