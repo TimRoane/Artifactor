@@ -9,15 +9,16 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 from common import (
-    choose_another_run,
     downloads,
     json_file,
     project_root,
     report_model,
     requested_run_dir,
     run_dir,
+    shell,
     table,
 )
+from design import evidence_card, hero, launch_card, note, page_heading, section_heading
 
 from artifactor.onboarding import (
     create_project_from_frames,
@@ -27,8 +28,6 @@ from artifactor.onboarding import (
 )
 from artifactor.pipeline import analyze
 from artifactor.simulation import simulate
-
-st.set_page_config(page_title="Artifactor", page_icon="A", layout="wide")
 
 
 @st.cache_data(show_spinner=False)
@@ -53,8 +52,11 @@ def show_completed_run() -> None:
     if (root / "external_validation").exists():
         identity = json_file("external_validation/dataset_identity.json")
         conclusion = json_file("external_validation/validation_conclusion.json")
-        st.title("Artifactor external validation")
-        st.caption("Preregistered public-data evidence · research use only")
+        page_heading(
+            "EXTERNAL VALIDATION",
+            "Evidence beyond the simulator.",
+            "Preregistered questions, public-data observations, and their limits.",
+        )
         left, middle, right = st.columns(3)
         left.metric("Dataset", identity["dataset_id"])
         middle.metric("Tier", identity["tier"])
@@ -75,22 +77,44 @@ def show_completed_run() -> None:
         return
 
     model = report_model()
-    st.title(model["report_title"])
-    st.caption("Explainable artifact investigation · research use only")
-    left, middle, right = st.columns(3)
+    page_heading(
+        "INVESTIGATION OVERVIEW",
+        model["report_title"],
+        "The decision, the evidence behind it, and the next question worth asking.",
+    )
+    left, middle, right, fourth = st.columns(4)
     left.metric("Samples", model["sample_count"])
-    middle.metric("Design", model["design"]["overall_status"])
-    right.metric("Recommendation", model["recommendation_display_name"])
-    st.info(model["recommendation_rationale"])
-    st.warning(model["research_limitation"])
+    middle.metric("Modalities", len(model["modalities"]))
+    right.metric("Study design", model["design"]["overall_status"].replace("_", " ").capitalize())
+    fourth.metric("Evidence cards", len(model["evidence_cards"]))
+    permitted = model["design"]["correction_permitted"]
+    decision_tone = (
+        "caution"
+        if not permitted
+        else "neutral"
+        if model["recommendation_method"] == "none"
+        else "positive"
+    )
+    note(
+        model["recommendation_display_name"],
+        model["recommendation_rationale"],
+        decision_tone,
+    )
+    st.caption(model["research_limitation"])
     downloads()
-    st.subheader("Top evidence")
-    for finding in model["evidence_cards"][:3]:
-        with st.expander(finding["title"], expanded=True):
-            st.write(finding["observation"])
-            st.caption("Limitation: " + finding["limitations"][0])
-            st.write("Follow-up: " + finding["recommended_follow_ups"][0]["experiment"])
-    st.subheader("Method decision trail")
+    section_heading(
+        "01",
+        "What deserves your attention",
+        "Leading findings, paired with an experiment that could test them.",
+    )
+    for index, finding in enumerate(model["evidence_cards"][:3], start=1):
+        evidence_card(finding, index)
+    if not model["evidence_cards"]:
+        note(
+            "No evidence cards in this run",
+            "Review the study-design audit and correction comparison for the available evidence.",
+        )
+    section_heading("02", "How the decision was made")
     if model.get("analysis_type") == "targeted_ngs":
         st.error(model["ngs_summary"]["variant_statement"])
         st.dataframe(
@@ -98,27 +122,30 @@ def show_completed_run() -> None:
             use_container_width=True,
         )
     else:
-        st.dataframe(
-            table("corrections/method_eligibility.parquet"), use_container_width=True
-        )
+        st.dataframe(table("corrections/method_eligibility.parquet"), use_container_width=True)
 
 
 def show_preflight(config_path: Path) -> None:
     preflight = json.loads((config_path.parent / "preflight.json").read_text(encoding="utf-8"))
-    st.subheader("Preflight result")
+    section_heading(
+        "04",
+        "A final check before analysis",
+        "The study design determines whether correction can be evaluated.",
+    )
     left, middle, right = st.columns(3)
     left.metric("Matched samples", preflight.get("sample_count", 0))
     middle.metric("Design", preflight["design_status"])
-    right.metric(
-        "Correction gate", "eligible" if preflight["correction_eligible"] else "refused"
+    right.metric("Correction gate", "eligible" if preflight["correction_eligible"] else "refused")
+    clear_design = preflight["correction_eligible"] and preflight["design_status"] == "separable"
+    note(
+        "Ready to evaluate correction" if clear_design else "Review the design before proceeding",
+        preflight["design_reason"],
+        "positive" if clear_design else "caution",
     )
-    if preflight["correction_eligible"]:
-        st.success(preflight["design_reason"])
-    else:
-        st.warning(preflight["design_reason"])
     for issue in preflight["issues"]:
         (st.error if issue["level"] == "error" else st.warning)(issue["message"])
-    st.code(str(config_path), language=None)
+    with st.expander("Project configuration"):
+        st.code(str(config_path), language=None)
     if st.button("Run analysis", type="primary", disabled=not preflight["valid"]):
         with st.spinner("Analyzing the study and evaluating correction safety…"):
             completed = analyze(config_path)
@@ -127,24 +154,45 @@ def show_preflight(config_path: Path) -> None:
 
 
 def analyze_my_data() -> None:
-    st.subheader("1. Upload analysis-ready tables")
-    st.write(
-        "Upload sample metadata and at least one numeric measurement matrix. "
-        "Rows may be samples or features; Artifactor will inspect both orientations."
+    section_heading(
+        "01",
+        "Bring the measurements. Keep the context.",
+        "Add sample metadata and analysis-ready measurements. We will check how the samples line up.",
     )
-    metadata_upload = st.file_uploader(
-        "Sample metadata", type=["csv", "tsv", "txt", "parquet", "pq"]
-    )
-    matrix_uploads = st.file_uploader(
-        "Measurement matrix or matrices",
-        type=["csv", "tsv", "txt", "parquet", "pq"],
-        accept_multiple_files=True,
-    )
-    if not metadata_upload or not matrix_uploads:
-        st.caption(
-            "Metadata needs one row per sample. A samples-by-features matrix needs a sample-ID "
-            "column; a features-by-samples matrix needs sample IDs as column names."
+    left, right = st.columns(2, gap="large")
+    with left, st.container(border=True):
+        st.markdown("**Sample context**")
+        st.caption("One row per sample, with biological and processing variables.")
+        metadata_upload = st.file_uploader(
+            "Sample metadata", type=["csv", "tsv", "txt", "parquet", "pq"]
         )
+    with right, st.container(border=True):
+        st.markdown("**Measurement data**")
+        st.caption("One or more numeric matrices. Samples can be in rows or columns.")
+        matrix_uploads = st.file_uploader(
+            "Measurement matrix or matrices",
+            type=["csv", "tsv", "txt", "parquet", "pq"],
+            accept_multiple_files=True,
+        )
+    if not metadata_upload or not matrix_uploads:
+        note(
+            "Start with analysis-ready data",
+            "Use normalized continuous measurements and matching sample IDs. Raw sequencing reads and variant files need upstream processing first.",
+        )
+        with st.expander("What should my tables look like?"):
+            st.markdown("**Metadata** · identifiers plus the variables that describe your study")
+            st.code(
+                "sample_id,condition,batch\nS01,control,B1\nS02,treated,B1\nS03,control,B2\nS04,treated,B2",
+                language="text",
+            )
+            st.markdown("**Measurements** · sample identifiers plus numeric feature columns")
+            st.code(
+                "sample_id,gene_1,gene_2\nS01,4.2,8.1\nS02,5.0,7.8\nS03,4.4,8.0\nS04,5.1,7.6",
+                language="text",
+            )
+            st.caption(
+                "Illustrative format only. A real study needs enough samples to support its design and evaluation."
+            )
         return
     try:
         metadata = uploaded_table(metadata_upload.name, metadata_upload.getvalue())
@@ -154,7 +202,8 @@ def analyze_my_data() -> None:
     except (OSError, ValueError) as exc:
         st.error(f"Could not read the uploaded tables: {exc}")
         return
-    st.dataframe(metadata.head(10), use_container_width=True)
+    with st.expander("Preview sample metadata", expanded=True):
+        st.dataframe(metadata.head(10), use_container_width=True, hide_index=True)
     try:
         inferred_id = infer_sample_id(metadata, matrices)
     except ValueError:
@@ -193,21 +242,26 @@ def analyze_my_data() -> None:
             st.warning(f"{item.name}: {warning}")
     roles = suggest_roles(metadata, sample_id)
     available_roles = [str(column) for column in metadata.columns if str(column) != sample_id]
-    st.subheader("2. Tell Artifactor what the metadata means")
-    biological = st.multiselect(
+    section_heading(
+        "02",
+        "Define what matters",
+        "Declare the biology to protect and the technical effects to investigate.",
+    )
+    biology_panel, technical_panel = st.columns(2, gap="large")
+    biological = biology_panel.multiselect(
         "Biological variables to preserve",
         available_roles,
         default=roles["biological"],
         help="Examples: condition, disease status, tissue, treatment, sex, or timepoint.",
     )
     technical_options = [item for item in available_roles if item not in biological]
-    technical = st.multiselect(
+    technical = technical_panel.multiselect(
         "Technical variables to investigate",
         technical_options,
         default=[item for item in roles["technical"] if item in technical_options],
         help="Examples: batch, plate, instrument, center, lane, lot, or processing date.",
     )
-    protected = st.multiselect(
+    protected = biology_panel.multiselect(
         "Protected variables correction must preserve",
         biological,
         default=biological,
@@ -215,7 +269,7 @@ def analyze_my_data() -> None:
     identifier_options = [
         item for item in available_roles if item not in biological and item not in technical
     ]
-    identifiers = st.multiselect(
+    identifiers = technical_panel.multiselect(
         "Other identifier columns (kept as metadata, not analyzed)",
         identifier_options,
         default=[item for item in roles["identifier"] if item in identifier_options],
@@ -223,7 +277,11 @@ def analyze_my_data() -> None:
     )
     if not biological or not technical:
         st.warning("Choose at least one biological and one technical variable to continue.")
-    st.subheader("3. Confirm matrix types and analysis size")
+    section_heading(
+        "03",
+        "Set the scope",
+        "Confirm the measurement types, choose analysis depth, and name your study.",
+    )
     labels = {
         "Generic continuous": "generic_continuous",
         "RNA expression (normalized/continuous)": "rna_continuous",
@@ -235,11 +293,14 @@ def analyze_my_data() -> None:
     for name in matrices:
         choice = st.selectbox(f"{name}", list(labels), key=f"kind-{name}")
         kinds[name] = labels[choice]
-    budget = st.selectbox(
-        "Analysis depth", ["quick", "standard", "full"], index=0,
+    scope, identity = st.columns([1, 2], gap="large")
+    budget = scope.selectbox(
+        "Analysis depth",
+        ["quick", "standard", "full"],
+        index=0,
         help="Quick is best for the first pass. Standard/full increase resampling and runtime.",
     )
-    project_name = st.text_input("Project name", "My Artifactor Study")
+    project_name = identity.text_input("Project name", "My Artifactor Study")
     confirmed = st.checkbox(
         "I reviewed the biological, technical, and protected variable assignments."
     )
@@ -273,7 +334,24 @@ def analyze_my_data() -> None:
 
 
 def try_demo() -> None:
-    st.subheader("Try a complete example")
+    section_heading(
+        "01",
+        "Two studies. Two responsible decisions.",
+        "Explore both a correction that passes the checks and a design that cannot support one.",
+    )
+    left, right = st.columns(2)
+    with left:
+        note(
+            "Independent support",
+            "Biology and batch overlap across samples. The analysis can compare corrections against biological-preservation criteria.",
+            "positive",
+        )
+    with right:
+        note(
+            "Confounded by design",
+            "Biology and batch are inseparable. The result explains why correction is refused and what evidence is missing.",
+            "caution",
+        )
     scenario = st.selectbox(
         "Demo",
         ["separable", "confounded"],
@@ -286,29 +364,50 @@ def try_demo() -> None:
         "The demo creates synthetic inputs with known truth, runs the same pipeline used for "
         "uploaded data, and opens the completed result."
     )
+    st.caption("80 synthetic samples · RNA + protein · fixed seed · no external dataset required")
     if st.button("Run demo", type="primary"):
         stamp = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
         destination = project_root() / f"demo-{scenario}-{stamp}"
-        with st.spinner("Creating and analyzing the demonstration…"):
-            simulate(scenario, destination, samples=80, rna_features=500, protein_features=150)
-            completed = analyze(destination / "config.yaml")
+        try:
+            with st.status("Building your investigation…", expanded=True) as progress:
+                st.write(
+                    "Generating a synthetic cohort with known biological and technical effects."
+                )
+                simulate(scenario, destination, samples=80, rna_features=500, protein_features=150)
+                st.write("Auditing the design, evaluating the evidence, and preparing the report.")
+                completed = analyze(destination / "config.yaml")
+                progress.update(label="Investigation complete", state="complete", expanded=False)
+        except (OSError, ValueError) as exc:
+            st.error(f"The demonstration could not finish: {exc}")
+            return
         st.session_state.run_dir = completed
         st.rerun()
 
 
 def open_run() -> None:
-    st.subheader("Open a completed run")
+    section_heading(
+        "01", "Pick up the investigation", "Reopen saved evidence without rerunning the analysis."
+    )
     root = project_root()
-    recent = sorted(
-        (path.parent for path in root.glob("**/run.json")),
-        key=lambda path: path.stat().st_mtime,
-        reverse=True,
-    )[:20] if root.exists() else []
+    recent = (
+        sorted(
+            (path.parent for path in root.glob("**/run.json")),
+            key=lambda path: path.stat().st_mtime,
+            reverse=True,
+        )[:20]
+        if root.exists()
+        else []
+    )
     selected = st.selectbox(
         "Recent runs",
         [""] + [str(path) for path in recent],
-        format_func=lambda value: "Choose a recent run…" if not value else value,
+        format_func=lambda value: "Choose a recent run…" if not value else Path(value).name,
     )
+    if not recent:
+        note(
+            "A fresh workspace",
+            "Completed studies will appear here. You can also open a run stored elsewhere by entering its directory below.",
+        )
     candidate = st.text_input("Or enter a run directory", value=selected)
     if st.button("Open run", disabled=not candidate):
         path = Path(candidate).expanduser().resolve()
@@ -319,29 +418,97 @@ def open_run() -> None:
         st.rerun()
 
 
+def show_workspace() -> None:
+    hero()
+    section_heading("↗", "Where would you like to begin?")
+    choices = [
+        (
+            "01",
+            "Start with your data",
+            "Build a study from your measurements and sample metadata. Let the design guide the analysis.",
+            "NEW STUDY",
+            "Analyze my data",
+            "analyze",
+        ),
+        (
+            "02",
+            "See the method in action",
+            "Explore two synthetic studies. See when correction is justified, and when restraint is the result.",
+            "GUIDED DEMO",
+            "Try a demonstration",
+            "demo",
+        ),
+        (
+            "03",
+            "Return to the evidence",
+            "Open a completed investigation. Review the decision, explore the evidence, and collect your report.",
+            "SAVED RESULTS",
+            "Open a completed run",
+            "open",
+        ),
+    ]
+    for column, (number, title, description, tag, label, mode) in zip(
+        st.columns(3, gap="medium"), choices, strict=True
+    ):
+        with column, st.container(border=True):
+            launch_card(number, title, description, tag)
+            if st.button(
+                label,
+                key=f"launch-{mode}",
+                type="primary" if mode == "analyze" else "secondary",
+                use_container_width=True,
+            ):
+                st.session_state.workspace_mode = mode
+                st.rerun()
+    st.html(
+        '<div class="workflow-strip"><div><strong>Design comes first.</strong>'
+        "<p>Check what the study can identify before changing the measurements.</p></div>"
+        "<div><strong>Preservation is part of the test.</strong>"
+        "<p>Evaluate technical removal alongside retention of declared biology.</p></div>"
+        "<div><strong>Every decision leaves a record.</strong>"
+        "<p>Inspect the evidence, its limitations, and the next experiment.</p></div></div>"
+    )
+
+
+shell("overview" if requested_run_dir() is not None else "workspace")
 if requested_run_dir() is not None:
-    choose_another_run()
     show_completed_run()
 elif "onboarding_config" in st.session_state:
-    st.title("Artifactor study setup")
+    page_heading(
+        "STUDY SETUP",
+        "Ready for a closer look.",
+        "Review the preflight result before launching the investigation.",
+    )
     if st.button("Start over"):
         del st.session_state.onboarding_config
         st.rerun()
     show_preflight(Path(st.session_state.onboarding_config))
 else:
-    st.title("Start an Artifactor analysis")
-    st.write(
-        "Check whether technical processing affected your measurement data, whether correction "
-        "is scientifically safe, and download corrected data when it passes the safety gates."
-    )
-    mode = st.radio(
-        "What would you like to do?",
-        ["Analyze my data", "Try a demonstration", "Open a completed run"],
-        horizontal=True,
-    )
-    if mode == "Analyze my data":
-        analyze_my_data()
-    elif mode == "Try a demonstration":
-        try_demo()
+    mode = st.session_state.get("workspace_mode")
+    if mode is None:
+        show_workspace()
     else:
-        open_run()
+        if st.button("← Back to workspace"):
+            st.session_state.pop("workspace_mode", None)
+            st.rerun()
+        if mode == "analyze":
+            page_heading(
+                "NEW STUDY",
+                "Give your study a clear starting point.",
+                "Measurements, metadata, and a question worth protecting.",
+            )
+            analyze_my_data()
+        elif mode == "demo":
+            page_heading(
+                "GUIDED DEMONSTRATIONS",
+                "See the evidence change the decision.",
+                "A complete investigation, from a known synthetic signal to an explained result.",
+            )
+            try_demo()
+        else:
+            page_heading(
+                "COMPLETED RUNS",
+                "Your evidence, ready to revisit.",
+                "Continue from a saved investigation and take its results with you.",
+            )
+            open_run()

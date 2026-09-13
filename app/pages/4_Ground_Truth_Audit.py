@@ -1,28 +1,42 @@
-import streamlit as st
-from common import choose_another_run, report_model, run_dir, table
+import json
 
-choose_another_run()
-st.title("Ground-Truth Audit")
+import streamlit as st
+from common import report_model, run_dir, shell, table
+from design import note, page_heading, section_heading
+
+shell("ground_truth")
+page_heading(
+    "SYNTHETIC VALIDATION",
+    "Check the answer against the known signal.",
+    "Use injected effects to evaluate recovery. Keep this evidence separate from observations in real studies.",
+)
 model = report_model()
 if not model["ground_truth"]["supplied"]:
-    st.info("Not included: ground_truth_not_supplied. This page is for synthetic benchmark runs.")
+    note(
+        "Ground truth was not supplied",
+        "This audit is available for synthetic benchmark runs. It is intentionally absent when the true effects are unknown.",
+    )
 else:
-    st.warning("Synthetic recovery evidence is separate from observational evidence.")
-    st.json(model["ground_truth"])
+    note(
+        "A controlled test of recovery",
+        "Synthetic results measure performance under the simulator's assumptions. They do not establish external or clinical validity.",
+        "caution",
+    )
+    with st.expander("Ground-truth summary"):
+        st.json(model["ground_truth"])
     if model.get("analysis_type") == "targeted_ngs":
-        if (run_dir() / "ground_truth/ngs_coverage_recovery.json").exists():
-            st.subheader("Coverage recovery")
-            st.json(
-                __import__("json").loads(
-                    (run_dir() / "ground_truth/ngs_coverage_recovery.json").read_text()
-                )
-            )
-        if (run_dir() / "ground_truth/ngs_variant_recovery.json").exists():
-            st.subheader("Variant and artifact recovery")
-            st.json(
-                __import__("json").loads(
-                    (run_dir() / "ground_truth/ngs_variant_recovery.json").read_text()
-                )
-            )
+        for title, filename in [
+            ("Coverage recovery", "ngs_coverage_recovery.json"),
+            ("Variant and artifact recovery", "ngs_variant_recovery.json"),
+        ]:
+            path = run_dir() / "ground_truth" / filename
+            if path.exists():
+                section_heading("↗", title)
+                st.json(json.loads(path.read_text(encoding="utf-8")))
     elif (run_dir() / "ground_truth/feature_recovery.parquet").exists():
-        st.dataframe(table("ground_truth/feature_recovery.parquet"), use_container_width=True)
+        section_heading("01", "Feature-level recovery")
+        st.dataframe(
+            table("ground_truth/feature_recovery.parquet"),
+            use_container_width=True,
+            hide_index=True,
+        )

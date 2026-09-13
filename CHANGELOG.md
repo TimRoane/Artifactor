@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Redesigned the Streamlit workspace with a shared visual identity, focused study/demo/reopen entry points, contextual navigation, consistent charts, and decision-led evidence and download views.
 - Replaced the current MIT license with the proprietary Artifactor Source Inspection License for portfolio and hiring review. Execution, modification, and redistribution require separate written permission, subject to the exceptions stated in the license. Previously validly granted permissions and third-party licenses are preserved.
 - Updated package and citation metadata, the README, and contributor and setup guidance to reflect the inspection-only terms.
 
