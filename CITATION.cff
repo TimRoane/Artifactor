@@ -1,9 +1,9 @@
 cff-version: 1.2.0
 title: Artifactor
-message: "If you use this research prototype, please cite the software."
+message: "If you discuss Artifactor or use it with separate written permission, please cite the software. Citation does not grant permission to use it."
 type: software
 version: 0.5.0
 date-released: 2026-08-07
-license: MIT
+license-url: "https://github.com/TimRoane/Artifactor/blob/main/LICENSE"
 authors:
   - name: Artifactor contributors

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-labelledby="title desc">
+  <title id="title">Artifactor — understand the signal before you correct it</title>
+  <desc id="desc">A dark blue banner with a schematic matrix flowing into biological evidence, technical evidence, and unresolved variation. The illustration is conceptual, not measured data.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#0b1829"/><stop offset="1" stop-color="#122e3b"/></linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#a6c7d2" stroke-opacity=".055"/></pattern>
+    <pattern id="matrix" x="700" y="140" width="28" height="28" patternUnits="userSpaceOnUse"><rect x="3" y="3" width="20" height="20" rx="4" fill="#3b6879"/></pattern>
+  </defs>
+  <rect width="1280" height="420" rx="18" fill="url(#bg)"/>
+  <rect width="1280" height="420" rx="18" fill="url(#grid)"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <rect x="52" y="49" width="34" height="34" rx="8" fill="#6ce5c0"/>
+    <path d="M61 74L69 57L77 74M64 68H74" fill="none" stroke="#0b1829" stroke-width="2.5" stroke-linejoin="round"/>
+    <text x="100" y="74" fill="#f0f7fa" font-size="23" font-weight="700" letter-spacing="3">ARTIFACTOR</text>
+    <text x="52" y="153" fill="#f0f7fa" font-size="45" font-weight="700">Understand the signal</text>
+    <text x="52" y="209" fill="#6ce5c0" font-size="45" font-weight="700">before you correct it.</text>
+    <text x="54" y="259" fill="#b7cbd4" font-size="19">Assay-aware artifact investigation for multi-omics.</text>
+    <path d="M54 303H606" stroke="#375160"/>
+    <text x="54" y="340" fill="#e4edf1" font-size="15">Audit the design.</text>
+    <text x="222" y="340" fill="#e4edf1" font-size="15">Weigh the evidence.</text>
+    <text x="414" y="340" fill="#e4edf1" font-size="15">Explain the decision.</text>
+    <rect x="672" y="114" width="164" height="192" rx="14" fill="#132f40" stroke="#446473"/>
+    <rect x="700" y="140" width="112" height="140" fill="url(#matrix)"/>
+    <g fill="#6ce5c0"><rect x="703" y="143" width="20" height="20" rx="4"/><rect x="731" y="171" width="20" height="20" rx="4"/><rect x="703" y="227" width="20" height="20" rx="4"/><rect x="787" y="199" width="20" height="20" rx="4"/><rect x="759" y="255" width="20" height="20" rx="4"/></g>
+    <g fill="#80adff"><rect x="759" y="143" width="20" height="20" rx="4"/><rect x="787" y="171" width="20" height="20" rx="4"/><rect x="731" y="227" width="20" height="20" rx="4"/><rect x="703" y="199" width="20" height="20" rx="4"/></g>
+    <g fill="#f0c278"><rect x="759" y="199" width="20" height="20" rx="4"/><rect x="787" y="255" width="20" height="20" rx="4"/></g>
+    <g fill="none" stroke="#577b8d" stroke-width="2"><path d="M836 210H880V111H922"/><path d="M880 210H922"/><path d="M880 210V309H922"/></g>
+    <circle cx="880" cy="210" r="5" fill="#bed2dc"/>
+    <rect x="922" y="76" width="306" height="70" rx="12" fill="#173e40" stroke="#367467"/>
+    <circle cx="950" cy="111" r="6" fill="#6ce5c0"/>
+    <text x="970" y="106" font-size="18" font-weight="600" fill="#b1f5dd">Biological evidence</text>
+    <text x="970" y="129" font-size="14" fill="#bdced5">Variation to preserve</text>
+    <rect x="922" y="175" width="306" height="70" rx="12" fill="#1a324e" stroke="#46638c"/>
+    <circle cx="950" cy="210" r="6" fill="#80adff"/>
+    <text x="970" y="205" font-size="18" font-weight="600" fill="#b5cfff">Technical evidence</text>
+    <text x="970" y="228" font-size="14" fill="#bdced5">Effects to investigate</text>
+    <rect x="922" y="274" width="306" height="70" rx="12" fill="#34372f" stroke="#7e7252"/>
+    <circle cx="950" cy="309" r="6" fill="#f0c278"/>
+    <text x="970" y="304" font-size="18" font-weight="600" fill="#f4d59f">Unresolved variation</text>
+    <text x="970" y="327" font-size="14" fill="#bdced5">Limits to make explicit</text>
+    <text x="672" y="377" fill="#94aebd" font-size="12" letter-spacing="1.5">CONCEPTUAL VIEW · EVIDENCE BEFORE CORRECTION</text>
+  </g>
+</svg>

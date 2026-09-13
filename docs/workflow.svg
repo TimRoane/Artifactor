@@ -1,10 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="180" viewBox="0 0 960 180" role="img" aria-labelledby="title desc">
-  <title id="title">Artifactor workflow</title><desc id="desc">Inputs flow through design audit, diagnostics, correction comparison, and evidence report.</desc>
-  <style>text{font:15px system-ui;fill:#17212b}.box{fill:#eef7f3;stroke:#2e7d6e;stroke-width:2}.gate{fill:#fff4dc;stroke:#a86100;stroke-width:2}.arrow{stroke:#52606d;stroke-width:2;marker-end:url(#a)}</style>
-  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#52606d"/></marker></defs>
-  <rect class="box" x="20" y="55" rx="10" width="150" height="70"/><text x="95" y="85" text-anchor="middle">Manifest +</text><text x="95" y="107" text-anchor="middle">omics matrices</text>
-  <line class="arrow" x1="170" y1="90" x2="215" y2="90"/><rect class="gate" x="220" y="55" rx="10" width="150" height="70"/><text x="295" y="85" text-anchor="middle">Identifiability</text><text x="295" y="107" text-anchor="middle">gate</text>
-  <line class="arrow" x1="370" y1="90" x2="415" y2="90"/><rect class="box" x="420" y="55" rx="10" width="150" height="70"/><text x="495" y="85" text-anchor="middle">Latent + variance</text><text x="495" y="107" text-anchor="middle">diagnostics</text>
-  <line class="arrow" x1="570" y1="90" x2="615" y2="90"/><rect class="box" x="620" y="55" rx="10" width="150" height="70"/><text x="695" y="85" text-anchor="middle">Correction</text><text x="695" y="107" text-anchor="middle">Pareto audit</text>
-  <line class="arrow" x1="770" y1="90" x2="815" y2="90"/><rect class="box" x="820" y="55" rx="10" width="120" height="70"/><text x="880" y="85" text-anchor="middle">Evidence +</text><text x="880" y="107" text-anchor="middle">follow-up</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="430" viewBox="0 0 1280 430" role="img" aria-labelledby="title desc">
+  <title id="title">From measurements to a defensible decision</title>
+  <desc id="desc">Measurements and metadata pass through validation, a design audit, diagnostics, eligible correction comparison, and an evidence report. When the design is not identifiable, correction is refused and the reason is reported. Passing the design gate still requires passing preservation checks before corrected data can be exported.</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L7 4L0 8" fill="none" stroke="#607b8c" stroke-width="1.5"/></marker></defs>
+  <rect x="1" y="1" width="1278" height="428" rx="16" fill="#f5f8fb" stroke="#dce5ed"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="36" y="45" font-size="13" font-weight="700" letter-spacing="2" fill="#506776">THE ANALYSIS PATH</text>
+    <text x="36" y="78" font-size="24" font-weight="700" fill="#142c3c">Study design determines which actions are justified.</text>
+    <g fill="none" stroke="#607b8c" stroke-width="2" marker-end="url(#arrow)"><path d="M246 186H278"/><path d="M494 186H526"/><path d="M742 186H774"/><path d="M990 186H1022"/></g>
+    <g fill="#fff" stroke="#cddae4"><rect x="36" y="117" width="210" height="138" rx="12"/><rect x="532" y="117" width="210" height="138" rx="12"/><rect x="780" y="117" width="210" height="138" rx="12"/></g>
+    <rect x="284" y="117" width="210" height="138" rx="12" fill="#fff7e8" stroke="#d8b777"/>
+    <rect x="1028" y="117" width="216" height="138" rx="12" fill="#eaf7f2" stroke="#8bc6b2"/>
+    <g font-size="13" font-weight="700" letter-spacing="1.5" fill="#506776"><text x="54" y="146">01 / VALIDATE</text><text x="302" y="146" fill="#865711">02 / AUDIT</text><text x="550" y="146">03 / DIAGNOSE</text><text x="798" y="146">04 / COMPARE</text><text x="1046" y="146" fill="#216652">05 / EXPLAIN</text></g>
+    <g font-size="20" font-weight="700" fill="#142c3c"><text x="54" y="183">Align the inputs</text><text x="302" y="183">Check the design</text><text x="550" y="183">Trace variation</text><text x="798" y="183">Test corrections</text><text x="1046" y="183">Report evidence</text></g>
+    <g font-size="14" fill="#4c6170"><text x="54" y="214">Matrices + metadata</text><text x="54" y="237">Types, samples, transforms</text><text x="302" y="214">Rank, overlap, confounding</text><text x="302" y="237">Can effects be separated?</text><text x="550" y="214">Factors + associations</text><text x="550" y="237">Stability + assay context</text><text x="798" y="214">Technical removal</text><text x="798" y="237">Biological preservation</text><text x="1046" y="214">Decision + provenance</text><text x="1046" y="237">Exports when justified</text></g>
+    <path d="M389 255V310H532" fill="none" stroke="#9c7028" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="540" y="281" width="450" height="62" rx="10" fill="#fff7e8" stroke="#d8b777"/>
+    <text x="558" y="306" font-size="16" font-weight="700" fill="#7c5010">Unidentifiable design → refuse correction</text>
+    <text x="558" y="329" font-size="14" fill="#765e38">Keep diagnostic evidence; explain limits and follow-up.</text>
+    <path d="M990 312H1136V263" fill="none" stroke="#9c7028" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="36" y="390" font-size="15" fill="#4c6170">Passing the design gate permits evaluation. Corrected exports also require the preservation checks to pass.</text>
+  </g>
 </svg>

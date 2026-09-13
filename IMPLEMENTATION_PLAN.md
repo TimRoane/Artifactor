@@ -1,5 +1,7 @@
 # Artifactor: Codex-Ready Implementation Plan
 
+> Historical planning document: its original MIT licensing task is superseded by the current proprietary [Source Inspection License](LICENSE).
+
 > Implementation status (2026-08-05): phases 0–10 are implemented in v0.1.0. The
 > Python CLI, four deterministic simulations, design gate, diagnostics, correction
 > comparison, preservation audit, reports, six-page UI, portable workflow profiles,
@@ -1171,5 +1173,4 @@ Only consider these after the MVP is demonstrably complete:
 - Real AWS Batch cost collection.
 - Static deployment of completed reports.
 - Plugin SDK for company-specific assay rules.
-
 

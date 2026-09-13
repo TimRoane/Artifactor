@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Replaced the current MIT license with the proprietary Artifactor Source Inspection License for portfolio and hiring review. Execution, modification, and redistribution require separate written permission, subject to the exceptions stated in the license. Previously validly granted permissions and third-party licenses are preserved.
+- Updated package and citation metadata, the README, and contributor and setup guidance to reflect the inspection-only terms.
+
 ## 0.5.0 — 2026-08-07
 
 - Added `artifactor start`, a guided Analyze / Demo / Open home screen for new users.

@@ -1,5 +1,7 @@
 # Getting started with a new study
 
+These instructions are for maintainers and users with separate written permission to install and run Artifactor. The public [source inspection license](../LICENSE) permits review of the authors' work; it does not grant execution or modification rights.
+
 Artifactor's normal input is much simpler than its public validation case studies. You need:
 
 1. A metadata table with one row per sample.
